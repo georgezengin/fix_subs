@@ -21,19 +21,19 @@ outfile = ''
 parser = argparse.ArgumentParser(description='Parse command line arguments.')
 
 def print_info(s):
-    #if arg1 and (arg1 == '--I' or arg1 == '--V'):
-    if infoMode or verbose: #args['I'] or args['V']:
-        print(s)
-        if args['LOGFILE']:
-            print(s, file=outfile )
+    if arg1 and (arg1 == '--I' or arg1 == '--V'):
+    # if infoMode or verbose: #args['I'] or args['V']:
+         print(s)
+    #     if args['LOGFILE']:
+    #         print(s, file=outfile )
 
 def print_verb(s):
-    #if arg1 and (arg1 == '--V'):
-    #    print(s)
-    if args['V']:
+    if arg1 and (arg1 == '--V'):
         print(s)
-        if args['LOGFILE']:
-            print(s, file=outfile )
+    # if args['V']:
+    #     print(s)
+    #     if args['LOGFILE']:
+    #         print(s, file=outfile )
 
         
 def has_english_subtitle(file_path):
@@ -46,6 +46,17 @@ def has_english_subtitle(file_path):
         #    return True
     #return False
     return any(track.track_type == 'Text' and track.language == 'en' for track in media_info.tracks)
+
+def has_spanish_subtitle(file_path):
+    media_info = MediaInfo.parse(file_path)
+    #print(f"{media_info}")
+    
+    #for track in media_info.tracks:
+        #print(f"track type='{track.track_type}' lang='{track.language}' track='{track}'")
+        #if track.track_type == 'Text' and track.language == 'en':
+        #    return True
+    #return False
+    return any(track.track_type == 'Text' and track.language == 'sp' for track in media_info.tracks)
 
 def largest_file(folder_path, masks):
     all_files = [os.path.join(folder_path, f) for f in os.listdir(folder_path) if any(f.endswith(mask) for mask in masks)]
@@ -111,11 +122,16 @@ def main():
         #check if movie has 
         movie_file_name, movie_ext = os.path.splitext(movfile)
         if movie_ext in MOVIE_EXTENSIONS:
+            print_info(f"[{tail}]: Movie file found -> [{movie_file_name + movie_ext}]")
+
             if has_english_subtitle(movfile):
                 print_info(f"[{tail}]: Embedded english subtitles found.")
                 break
-            
-            print_info(f"[{tail}]: Movie file found -> [{movie_file_name + movie_ext}]")
+
+            if has_spanish_subtitle(movfile):
+                print_info(f"[{tail}]: Embedded spanish subtitles found.")
+                break
+
             if not rename_srt_file(current_folder, movfile):
                 copy_english_srt(current_folder, movfile)
             break
@@ -152,43 +168,43 @@ def parse_args():
     #updated_args = {k.upper(): v for k, v in args.items()}
     return args #updated_args
 
-if __name__ == '__main__':
-    global args
-    try:
-        args = parse_args()
-        if all(v is not None for v in args.values()):
-            #print(args.demomode) #args['DEBUG'])
-            print(args)
-            #print(args['LOGMODE']) #['I']) #LOG'])
-            #print(args.log)
-            print(args.loglevel) #['V']) #LOGLEVEL'])
-            print(args.demo) #['D']) #DEMO'])
-            main()
-        else:
-            parser.print_help()
-            sys.exit(1)
-    except SystemExit:
-        #print('Unknown argument found!')
-        #parser.print_help()
-        sys.exit(1)
-
-
 # if __name__ == '__main__':
-#     if len(sys.argv) > 1 and sys.argv[1]:
-#         arg1 = sys.argv[1].upper()
-#         #print(f'Arg:{arg1}')
-        
-#     if len(sys.argv) > 2 and sys.argv[2]:
-#         arg2 = sys.argv[2].upper()
-#         #print(f'Arg:{arg2}')
-        
-#     if (arg1 and (arg1 == '?' or arg1=='--?' or arg1 not in ['--I','--V']) or (arg2 and arg2 != '--D')):
-#         print(f"fix_subs Utility: Fix subtitles in all subfolders. Run thru subfolders and find English srt file in subs if no other subtitle found in folder.")
-#         print(f"Syntax: fix_subs [--I/V] [--D]")
-#         print(f"Parameters: --I for Info")
-#         print(f"            --V for Verbose")
-#         print(f"            --D for Demo mode (no action taken)")
+#     global args
+#     try:
+#         args = parse_args()
+#         if all(v is not None for v in args.values()):
+#             #print(args.demomode) #args['DEBUG'])
+#             print(args)
+#             #print(args['LOGMODE']) #['I']) #LOG'])
+#             #print(args.log)
+#             print(args.loglevel) #['V']) #LOGLEVEL'])
+#             print(args.demo) #['D']) #DEMO'])
+#             main()
+#         else:
+#             parser.print_help()
+#             sys.exit(1)
+#     except SystemExit:
+#         #print('Unknown argument found!')
+#         #parser.print_help()
 #         sys.exit(1)
-#    else:
-#        main()
+
+
+if __name__ == '__main__':
+    if len(sys.argv) > 1 and sys.argv[1]:
+        arg1 = sys.argv[1].upper()
+        #print(f'Arg:{arg1}')
+        
+    if len(sys.argv) > 2 and sys.argv[2]:
+        arg2 = sys.argv[2].upper()
+        #print(f'Arg:{arg2}')
+        
+    if (arg1 and (arg1 == '?' or arg1=='--?' or arg1 not in ['--I','--V']) or (arg2 and arg2 != '--D')):
+        print(f"fix_subs Utility: Fix subtitles in all subfolders. Run thru subfolders and find English srt file in subs if no other subtitle found in folder.")
+        print(f"Syntax: fix_subs [--I/V] [--D]")
+        print(f"Parameters: --I for Info")
+        print(f"            --V for Verbose")
+        print(f"            --D for Demo mode (no action taken)")
+        sys.exit(1)
+    else:
+       main()
 
