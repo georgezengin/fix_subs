@@ -121,7 +121,7 @@ def main():
         # if found a file that is a movie
         if movie_ext in MOVIE_EXTENSIONS:
             print_info(f"[{tail}]: Movie file found -> [{movie_file_name + movie_ext}]")
-            langs2chk = ['english','spanish'] if 'spanish' in movie_file_name else ['spanish','english'] # search for spanish subtitle first if the film name contains the word SPANISH  in the name
+            langs2chk = ['spanish','english'] if 'spanish' in movie_file_name else ['english','spanish'] # search for spanish subtitle first if the film name contains the word SPANISH  in the name
             
             for sub_lang in langs2chk:
                 if found_embedded_sub(movfile, sub_lang):
