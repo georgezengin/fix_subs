@@ -1,7 +1,9 @@
-import sys, os, shutil
-from pymediainfo import MediaInfo
 import argparse
+import os
+import shutil
+import sys
 
+from pymediainfo import MediaInfo
 
 MOVIE_EXTENSIONS = ['.mkv', '.mp4', '.avi', '.mov']
 false = False
@@ -36,32 +38,51 @@ def print_verb(s):
     #         print(s, file=outfile )
 
         
-def has_english_subtitle(file_path):
+def found_embedded_sub(file_path, sub_lang):
     media_info = MediaInfo.parse(file_path)
+    langs = { 'english':'en', 'spanish':'sp'}
+
     #print(f"{media_info}")
-    
     #for track in media_info.tracks:
         #print(f"track type='{track.track_type}' lang='{track.language}' track='{track}'")
         #if track.track_type == 'Text' and track.language == 'en':
         #    return True
     #return False
-    return any(track.track_type == 'Text' and track.language == 'en' for track in media_info.tracks)
 
-def has_spanish_subtitle(file_path):
-    media_info = MediaInfo.parse(file_path)
-    #print(f"{media_info}")
-    
-    #for track in media_info.tracks:
-        #print(f"track type='{track.track_type}' lang='{track.language}' track='{track}'")
-        #if track.track_type == 'Text' and track.language == 'en':
-        #    return True
-    #return False
-    return any(track.track_type == 'Text' and track.language == 'sp' for track in media_info.tracks)
+    return any(track.track_type == 'Text' and track.language == langs[sub_lang] for track in media_info.tracks)
 
-def largest_file(folder_path, masks):
-    all_files = [os.path.join(folder_path, f) for f in os.listdir(folder_path) if any(f.endswith(mask) for mask in masks)]
-    largest_file = max(all_files, key=os.path.getsize)
+#def largest_file(folder_path, masks):
+    #all_files = [os.path.join(folder_path, f) for f in os.listdir(folder_path) if any(f.endswith(mask) for mask in masks)]
+    #largest_file = max(all_files, key=os.path.getsize)
+    #return largest_file
+
+def find_largest_srt_file(subfolder_path, sub_lang):
+    all_files = os.listdir(subfolder_path)
+    eng_srt_files = filter(lambda x: x.endswith('.srt') and sub_lang in x.lower(), all_files)
+    largest_file = max(eng_srt_files, key=lambda x: os.path.getsize(os.path.join(subfolder_path, x)), default=None)
     return largest_file
+
+def copy_srt(current_folder, sub_lang, movie_file):
+    head, tail = os.path.split(current_folder)
+    subs_folder = os.path.join(current_folder, 'subs')
+    if os.path.exists(subs_folder):
+        largest_file = find_largest_srt_file(subs_folder, sub_lang)
+        if largest_file:
+            src_path = os.path.join(subs_folder, largest_file)
+            movie_file_name, movie_ext = os.path.splitext(movie_file)
+            sub_file = movie_file_name + sub_ext
+            dst_path = os.path.join(current_folder, sub_file)
+            if not arg2 or arg2 != '--D':
+                shutil.copy2(src_path, dst_path)
+            print_verb(f"[{tail}]: Found {sub_lang} sub file in Subs folder in [{largest_file}]")
+            print_verb(f"[{tail}]: Copied sub file to [{sub_file}].")
+            return True
+        else:
+            print_info(f"[{tail}]: No {sub_lang} sub file in Subs folder")
+            return False
+    else:
+        print_info(f"[{tail}]: No Subs folder")
+        return True
 
 def rename_srt_file(current_folder, movie_file):
     head, tail = os.path.split(current_folder)
@@ -70,47 +91,23 @@ def rename_srt_file(current_folder, movie_file):
     dst_path = os.path.join(current_folder, srt_file)
     #print_verb(f"[{tail}]: Looking for subtitle [{srt_file}]")
     
-    if not os.path.exists(os.path.join(current_folder, srt_file)):
-        for file in os.listdir(current_folder):
-            file_name, ext = os.path.splitext(file)
-            if ext == sub_ext:
-                src_path = os.path.join(current_folder, file)
-                #os.rename(src_path, dst_path)
-                if not arg2 or arg2 != '--D':
-                    shutil.copy2(src_path, dst_path) # copy instead of renaming in order to preserve original file
-                print_info(f"[{tail}]: Found sub file [{file}] in folder")
-                print_info(f"[{tail}]: Copied sub file to [{srt_file}].")
-                return True
-        print_verb(f"[{tail}]: No srt file in current folder, will look in subs.")
-        return False #no .srt found, check in subs folder
-    else:
+    if os.path.exists(os.path.join(current_folder, srt_file)):
         print_info(f"[{tail}]: File {srt_file} already exists.")
-        return True #file exists, no need to continue
+        return 1 #file exists, no need to continue
 
-def find_largest_english_srt_file(subfolder_path):
-    all_files = os.listdir(subfolder_path)
-    eng_srt_files = filter(lambda x: x.endswith('.srt') and 'english' in x.lower(), all_files)
-    largest_file = max(eng_srt_files, key=lambda x: os.path.getsize(os.path.join(subfolder_path, x)), default=None)
-    return largest_file
-
-def copy_english_srt(current_folder, movie_file):
-    head, tail = os.path.split(current_folder)
-    subs_folder = os.path.join(current_folder, 'subs')
-    if os.path.exists(subs_folder):
-        largest_file = find_largest_english_srt_file(subs_folder)
-        if largest_file:
-            src_path = os.path.join(subs_folder, largest_file)
-            movie_file_name, movie_ext = os.path.splitext(movie_file)
-            sub_file = movie_file_name + sub_ext
-            dst_path = os.path.join(current_folder, sub_file)
+    for file in os.listdir(current_folder):
+        file_name, ext = os.path.splitext(file)
+        if ext == sub_ext:
+            src_path = os.path.join(current_folder, file)
             if not arg2 or arg2 != '--D':
-                shutil.copy2(src_path, dst_path)
-            print_verb(f"[{tail}]: Found english sub file in subs folder in [{largest_file}]")
-            print_verb(f"[{tail}]: Copied sub file to [{sub_file}].")
-        else:
-            print_info(f"[{tail}]: No english sub file in subs folder")
-    else:
-        print_info(f"[{tail}]: No Subs folder")
+                #os.rename(src_path, dst_path)
+                shutil.copy2(src_path, dst_path) # copy instead of renaming in order to preserve original file
+            print_info(f"[{tail}]: Found sub file [{file}] in folder")
+            print_info(f"[{tail}]: Copied sub file to [{srt_file}].")
+            return 2
+
+    print_verb(f"[{tail}]: No srt file in current folder, will look in subs.")
+    return -1 #no .srt found, check in subs folder
 
 def main():
     current_folder = os.getcwd()
@@ -119,30 +116,30 @@ def main():
     #print_verb(f"Head:[{head}]   Tail:[{tail}]")
     
     for movfile in os.listdir(current_folder):
-        #check if movie has 
+        #check if there is any movie file in the folder
         movie_file_name, movie_ext = os.path.splitext(movfile)
+        # if found a file that is a movie
         if movie_ext in MOVIE_EXTENSIONS:
             print_info(f"[{tail}]: Movie file found -> [{movie_file_name + movie_ext}]")
-
-            if has_english_subtitle(movfile):
-                print_info(f"[{tail}]: Embedded english subtitles found.")
-                break
-
-            if has_spanish_subtitle(movfile):
-                print_info(f"[{tail}]: Embedded spanish subtitles found.")
-                break
-
-            if not rename_srt_file(current_folder, movfile):
-                copy_english_srt(current_folder, movfile)
-            break
+            langs2chk = ['english','spanish'] if 'spanish' in movie_file_name else ['spanish','english'] # search for spanish subtitle first if the film name contains the word SPANISH  in the name
             
-    else:
-        print_info(f"[{tail}]: *** No movie files found ***")
-    print("[*********************************************]")
+            for sub_lang in langs2chk:
+                if found_embedded_sub(movfile, sub_lang):
+                    print_info(f"[{tail}]: Embedded {sub_lang} subtitles found.")
+                    break # break language file search
+                elif (rena_result := rename_srt_file(current_folder, movfile)) == -1 :
+                    copy_srt(current_folder, sub_lang, movfile)
+                    break # break language file search
+                elif rena_result == 1:
+                    break # break language file search
+            
+        #else:
+        #    print_info(f"[{tail}]: *** No movie files found ***")
+    print_info("[*********************************************]")
 
 def parse_args():
     parser = argparse.ArgumentParser(prog = 'fix_subs',
-                    description = f"Fix subtitles in all subfolders. Run thru subfolders and find English srt file in subs if no other subtitle found in folder.",
+                    description = "Fix subtitles in all subfolders. Run thru subfolders and find English srt file in subs if no other subtitle found in folder.",
                     epilog = 'Each movie file in its folder (.mkv or .mp4) will be checked for embedded english subs. \n'+
                              'If not found a subtitle file in the same folder with any name or an optional [subs] folder that \n'+
                              'contains one or more *English*.srt files of which the largest will be copied and renamed with the same name as the movie file into its folder.',
@@ -199,11 +196,11 @@ if __name__ == '__main__':
         #print(f'Arg:{arg2}')
         
     if (arg1 and (arg1 == '?' or arg1=='--?' or arg1 not in ['--I','--V']) or (arg2 and arg2 != '--D')):
-        print(f"fix_subs Utility: Fix subtitles in all subfolders. Run thru subfolders and find English srt file in subs if no other subtitle found in folder.")
-        print(f"Syntax: fix_subs [--I/V] [--D]")
-        print(f"Parameters: --I for Info")
-        print(f"            --V for Verbose")
-        print(f"            --D for Demo mode (no action taken)")
+        print("fix_subs Utility: Fix subtitles in all subfolders. Run thru subfolders and find English srt file in subs if no other subtitle found in folder.")
+        print("Syntax: fix_subs [--I/V] [--D]")
+        print("Parameters: --I for Info")
+        print("            --V for Verbose")
+        print("            --D for Demo mode (no action taken)")
         sys.exit(1)
     else:
        main()
