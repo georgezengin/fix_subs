@@ -14,6 +14,7 @@ arg2 = ""
 current_folder = ""
 head = ""
 tail = ""
+movfile = ""
 log = []
 
 infoMode = False
@@ -39,6 +40,8 @@ def print_verb(s):
 
         
 def found_embedded_sub(file_path, sub_lang):
+    '''Check for a subtitle in the specified language that is embedded in the movie file. 
+    If found, don't look for an external subtitle file with extension .sub'''
     media_info = MediaInfo.parse(file_path)
     langs = { 'english':'en', 'spanish':'sp'}
 
@@ -49,7 +52,7 @@ def found_embedded_sub(file_path, sub_lang):
         #    return True
     #return False
 
-    return any(track.track_type == 'Text' and track.language == langs[sub_lang] for track in media_info.tracks)
+    return any(track.track_type == 'Text' and track.language.lower() == langs[sub_lang] for track in media_info.tracks)
 
 #def largest_file(folder_path, masks):
     #all_files = [os.path.join(folder_path, f) for f in os.listdir(folder_path) if any(f.endswith(mask) for mask in masks)]
@@ -57,12 +60,15 @@ def found_embedded_sub(file_path, sub_lang):
     #return largest_file
 
 def find_largest_srt_file(subfolder_path, sub_lang):
+    '''Find the largest subtitle file in the specified language'''
     all_files = os.listdir(subfolder_path)
     eng_srt_files = filter(lambda x: x.endswith('.srt') and sub_lang in x.lower(), all_files)
     largest_file = max(eng_srt_files, key=lambda x: os.path.getsize(os.path.join(subfolder_path, x)), default=None)
     return largest_file
 
-def copy_srt(current_folder, sub_lang, movie_file):
+
+def copy_srt_in_subs(current_folder, movie_file, sub_lang='english'):
+    '''Check for srt file in subs folder (if folder exists) in the specified language in parameter sub_lang'''
     head, tail = os.path.split(current_folder)
     subs_folder = os.path.join(current_folder, 'subs')
     if os.path.exists(subs_folder):
@@ -93,27 +99,49 @@ def rename_srt_file(current_folder, movie_file):
     
     if os.path.exists(os.path.join(current_folder, srt_file)):
         print_info(f"[{tail}]: File {srt_file} already exists.")
-        return 1 #file exists, no need to continue
+        return 0 #file exists, no need to continue
 
     for file in os.listdir(current_folder):
         file_name, ext = os.path.splitext(file)
         if ext == sub_ext:
             src_path = os.path.join(current_folder, file)
-            if not arg2 or arg2 != '--D':
+            print_info(f"[{tail}]: Found sub file [{file}] in same folder as movie file")
+            print_info(f"[{tail}]: Copied sub file to [{srt_file}].")
+            if (not arg2) or (arg2 != '--D'):
                 #os.rename(src_path, dst_path)
                 shutil.copy2(src_path, dst_path) # copy instead of renaming in order to preserve original file
-            print_info(f"[{tail}]: Found sub file [{file}] in folder")
-            print_info(f"[{tail}]: Copied sub file to [{srt_file}].")
-            return 2
+            return 1
 
-    print_verb(f"[{tail}]: No srt file in current folder, will look in subs.")
-    return -1 #no .srt found, check in subs folder
+    print_verb(f"[{tail}]: No srt file in movie folder, will look in subs folder.")
+    return -1 #no .srt found in this language
+
+def check_movie(current_folder, movfile):
+    head, tail = os.path.split(current_folder)
+    # search for spanish subtitle first if the film name contains the word SPANISH  in the name
+    langs2chk = ['spanish', 'english'] if 'spanish' in movfile.lower() else ['english', 'spanish']
+
+    for sub_lang in langs2chk:
+        #print_verb(f"[{tail}]: Checking for subtitles in [{sub_lang}] in folder [{current_folder}]")
+        if found_embedded_sub(movfile, sub_lang):
+            print_info(f"[{tail}]: Embedded {sub_lang} subtitles found.")
+            break  # break language file search
+
+        rena_result = rename_srt_file(current_folder, movfile)
+        # print_verb(f"[{tail}]: rena_result=[{rena_result}]")
+
+        if rena_result >= 0:
+            break
+        if copy_srt_in_subs(current_folder, movfile, sub_lang):
+            break  # break language file search as found a sub in the language requested
+        #else:
+        #    print_info(f"[{tail}]: *** No movie files found for language [{sub_lang}] in subs folder***")
+    #return
 
 def main():
     current_folder = os.getcwd()
-    print_verb(f"[{current_folder}] Current dir")
+    #print_verb(f"[{current_folder}] Current dir")
     head, tail = os.path.split(current_folder)
-    #print_verb(f"Head:[{head}]   Tail:[{tail}]")
+    #print_verb(f"Head:[{head}]   Tail:[{tail}] Current folder:[{current_folder}]")
     
     for movfile in os.listdir(current_folder):
         #check if there is any movie file in the folder
@@ -121,21 +149,9 @@ def main():
         # if found a file that is a movie
         if movie_ext in MOVIE_EXTENSIONS:
             print_info(f"[{tail}]: Movie file found -> [{movie_file_name + movie_ext}]")
-            langs2chk = ['spanish','english'] if 'spanish' in movie_file_name else ['english','spanish'] # search for spanish subtitle first if the film name contains the word SPANISH  in the name
-            
-            for sub_lang in langs2chk:
-                if found_embedded_sub(movfile, sub_lang):
-                    print_info(f"[{tail}]: Embedded {sub_lang} subtitles found.")
-                    break # break language file search
-                elif (rena_result := rename_srt_file(current_folder, movfile)) == -1 :
-                    copy_srt(current_folder, sub_lang, movfile)
-                    break # break language file search
-                elif rena_result == 1:
-                    break # break language file search
-            
-        #else:
-        #    print_info(f"[{tail}]: *** No movie files found ***")
-    print_info("[*********************************************]")
+            check_movie(current_folder, movfile)
+
+    #print_info("[*********************************************]")
 
 def parse_args():
     parser = argparse.ArgumentParser(prog = 'fix_subs',
