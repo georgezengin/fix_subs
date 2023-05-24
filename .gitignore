@@ -1,3 +1,9 @@
 log.txt
 /dir1
+/dir2
 *.txt
+/.idea
+/pycharm
+/.pytest_cache
+/.vscode
+.hintrc
