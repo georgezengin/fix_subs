@@ -1,3 +1,9 @@
 log.txt
 /dir1
 *.txt
+.idea/inspectionProfiles/profiles_settings.xml
+.idea/.gitignore
+.idea/misc.xml
+.idea/misc.xml.tmp
+.idea/modules.xml
+.idea/vcs.xml
