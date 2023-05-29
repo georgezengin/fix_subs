@@ -10,7 +10,7 @@ arg1 = ""
 arg2 = ""
 current_folder = ""
 head = ""
-tail = ""
+tail = ''
 
 def print_info(s):
     if arg1 and (arg1 == '--I' or arg1 == '--V'):
@@ -114,9 +114,9 @@ if __name__ == '__main__':
         arg2 = sys.argv[2].upper()
         print(f'Arg:{arg2}')
         
-    if (arg1 and (arg1 == '?' or arg1=='--?' or arg1 not in ['--I','--V']) or (arg2 and arg2 != '--D'):
+    if (arg1 and (arg1 == '?' or arg1=='--?' or arg1 not in ['--I','--V'])) or (arg2 and arg2 != '--D'):
         print(f"fix_subs Utility: Fix subtitles in all subfolders. Run thru subfolders and find English srt file in subs if no other subtitle found in folder.")
-        print(f"Syntax: fix_subs [--I/V] [--D]
+        print(f"Syntax: fix_subs [--I/V] [--D]")
         print(f"Parameters: --I for Info")
         print(f"            --V for Verbose")
         print(f"            --D for Demo mode (no action taken)")
