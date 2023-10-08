@@ -6,6 +6,7 @@ for /d %%d in (*) do (
 
     if exist RARBG.TXT del RARBG.TXT
     if exist RARBG_DO_NOT_MIRROR.exe del RARBG_DO_NOT_MIRROR.exe
+    del NEW*.txt
     if exist "[TGx]Downloaded from torrentgalaxy*.txt" del "[TGx]Downloaded from torrentgalaxy*.txt"
 
     python x:\2\_mov\__python\fix_year.py %1 %2
