@@ -7,10 +7,12 @@ log.txt
 /.pytest_cache
 /.vscode
 .hintrc
-fix_year - backup copy.py
-fix_year - Copy.py
+*backup copy.py
+*Copy.py
 test_argparse.py
 *.log
 *.ipynb
 test_year_pattern.py
 test_folder_renames.py
+*.code-workspace*
+*.bup
