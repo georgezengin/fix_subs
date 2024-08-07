@@ -8,6 +8,7 @@ log.txt
 /.vscode
 .hintrc
 *backup copy.py
+fix_subs b.py
 *Copy.py
 test_argparse.py
 *.log
@@ -15,4 +16,6 @@ test_argparse.py
 test_year_pattern.py
 test_folder_renames.py
 *.code-workspace*
+*bup*
 *.bup
+*.sav
