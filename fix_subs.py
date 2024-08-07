@@ -29,18 +29,10 @@ def print_info(s):
     if arg1 and (arg1 == '--I' or arg1 == '--V'):
         # if infoMode or verbose: #args['I'] or args['V']:
         print(s)
-    #     if args['LOGFILE']:
-    #         print(s, file=outfile )
-
 
 def print_verb(s):
     if arg1 and (arg1 == '--V'):
         print(s)
-    # if args['V']:
-    #     print(s)
-    #     if args['LOGFILE']:
-    #         print(s, file=outfile )
-
 
 def found_embedded_sub(file_path, sub_lang):
     '''Check for a subtitle in the specified language that is embedded in the movie file. 
@@ -59,9 +51,9 @@ def found_embedded_sub(file_path, sub_lang):
 
 
 # def largest_file(folder_path, masks):
-# all_files = [os.path.join(folder_path, f) for f in os.listdir(folder_path) if any(f.endswith(mask) for mask in masks)]
-# largest_file = max(all_files, key=os.path.getsize)
-# return largest_file
+#   all_files = [os.path.join(folder_path, f) for f in os.listdir(folder_path) if any(f.endswith(mask) for mask in masks)]
+#   largest_file = max(all_files, key=os.path.getsize)
+#   return largest_file
 
 def find_largest_srt_file(subfolder_path, sub_lang):
     """Find the largest subtitle file in the specified language"""
@@ -163,52 +155,21 @@ def main():
 
 def parse_args():
     parser: ArgumentParser = argparse.ArgumentParser(prog='fix_subs',
-                                     description="Fix subtitles in all subfolders. Run thru subfolders and find English srt file in subs if no other subtitle found in folder.",
+                                     description="Fix subtitles. Run thru subfolders and find English srt file in subs if no other subtitle found in folder.",
                                      epilog='Each movie file in its folder (.mkv or .mp4) will be checked for embedded english subs. \n' +
                                             'If not found a subtitle file in the same folder with any name or an optional [subs] folder that \n' +
                                             'contains one or more *English*.srt files of which the largest will be copied and renamed with the same name as the movie file into its folder.',
                                      add_help=True)
-    # group = parser.add_argument_group('Options')
-    # group.add_argument('--d', type=str, choices=[x.upper() for x in ['on', 'off']], default='OFF', help='Turn debug mode ON or OFF (no changes done)')
-    # group.add_argument('--log', type=str, help='Print to a log file in addition to the console')
-    # group.add_argument('--loglevel', type=str, choices=[x.upper() for x in ['info', 'verbose']], default='INFO', help='Specify the level of detail in the log')
 
     parser.add_argument('filename', nargs='?', default='fix_subs.log')  # positional argument
     parser.add_argument('-c', '--count', nargs='?', default=0)  # option that takes a value
     parser.add_argument('-v', '--verbose', nargs='?', action='store_true', default=True)  # on/off flag
-
-    # parser.add_argument('--debug', type=str, help='Turn debugging function ON or OFF')
-    # parser.add_argument('--log',  '--l', type=str, help='The name of the log file')
-    # parser.add_argument('--o',     default='fix_subs.log', help='The name of the log file')
-    # parser.add_argument('--loglevel',  type=str, help='The type of information to print')
-    # parser.add_argument('--demo', action='store_false', help='Turn on demo mode')
 
     args = vars(parser.parse_args())
     print(args.filename, args.count, args.verbose)
 
     # updated_args = {k.upper(): v for k, v in args.items()}
     return args  # updated_args
-
-
-# if __name__ == '__main__':
-#     global args
-#     try:
-#         args = parse_args()
-#         if all(v is not None for v in args.values()):
-#             #print(args.demomode) #args['DEBUG'])
-#             print(args)
-#             #print(args['LOGMODE']) #['I']) #LOG'])
-#             #print(args.log)
-#             print(args.loglevel) #['V']) #LOGLEVEL'])
-#             print(args.demo) #['D']) #DEMO'])
-#             main()
-#         else:
-#             parser.print_help()
-#             sys.exit(1)
-#     except SystemExit:
-#         #print('Unknown argument found!')
-#         #parser.print_help()
-#         sys.exit(1)
 
 
 if __name__ == '__main__':

@@ -2,17 +2,15 @@ log.txt
 /dir1
 /dir2
 *.txt
-<<<<<<< HEAD
-.idea/inspectionProfiles/profiles_settings.xml
-.idea/.gitignore
-.idea/misc.xml
-.idea/misc.xml.tmp
-.idea/modules.xml
-.idea/vcs.xml
-=======
 /.idea
-/pycharm
+/pycharm/*
 /.pytest_cache
 /.vscode
 .hintrc
->>>>>>> cc2c74e0e086f01bf37dbf1829aac54df6217ad8
+fix_year - backup copy.py
+fix_year - Copy.py
+test_argparse.py
+*.log
+*.ipynb
+test_year_pattern.py
+test_folder_renames.py

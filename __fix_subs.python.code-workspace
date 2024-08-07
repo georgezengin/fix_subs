@@ -10,19 +10,20 @@
 		[
 			{
 				"name": "Python: Current File",
-				"type": "python",
+				"type": "debugpy",
 				"request": "launch",
 				"program": "${file}",
 				"args": [
-//					"--debug",
+					"x:\\2\\_mov\\_older\\Classics\\",
+					"--nodesc",
 					//"ON",
-//					"--log",
+					"--log",
 //					"ON",
-//					"--o",
-//					"logfile.log",
-//					"--loglevel",
-//					"VERBOSE",
-//					"--demo"
+//					"--logfile",
+//					"kk.log",
+					"--loglevel",
+					"DEBUG",
+					"--demo"
 				]
 			}
 		]

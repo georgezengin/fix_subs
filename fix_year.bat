@@ -9,7 +9,7 @@ for /d %%d in (*) do (
     del NEW*.txt
     if exist "[TGx]Downloaded from torrentgalaxy*.txt" del "[TGx]Downloaded from torrentgalaxy*.txt"
 
-    python x:\2\_mov\__python\fix_year.py %1 %2
+    python ..\__fixsubs\fix_year.py . --log %1 %2
 	if errorlevel 1 exit /b
     rem cd ..
 
