@@ -17,7 +17,8 @@
 
 <p align="center"> # Movie Folder Renamer
 
-A Python script to rename movie folders by extracting and formatting the name, year, and release description as `<name> (year) [release_description]`.
+A Python script to rename movie folders by extracting and formatting the name, year, and release description as:
+`<name> (year) [release_description]`.
 
     <br> 
 </p>
@@ -26,13 +27,10 @@ A Python script to rename movie folders by extracting and formatting the name, y
 
 - [About](#about)
 - [Getting Started](#getting_started)
-- [Deployment](#deployment)
 - [Usage](#usage)
 - [Built Using](#built_using)
 - [TODO](../TODO.md)
-- [Contributing](../CONTRIBUTING.md)
 - [Authors](#authors)
-- [Acknowledgments](#acknowledgement)
 
 ## 🧐 About <a name = "about"></a>
 
@@ -65,8 +63,10 @@ git clone https://github.com/georgezengin/fix_subs.git
 cd fix_subs
 ```
 
+## 🎈 Usage <a name="usage"></a>
 
-## 🔧 Running the tests <a name = "tests"></a>
+Go to the folder where the movies folders are.
+Run the app as in the example above, or use a cmd/ps1/sh file as in the ones in the repo (provided as samples) to perform other automated cleanup tasks at the same time of the renaming.
 
 Use flag -h or --help to get a usage description of the parameters
 
@@ -90,23 +90,21 @@ options:
                         Set logging level
   --silent, -H          Silent/hush mode: suppress console output of log information
   --recurse, -R         Recursive mode: traverses through subfolders
-george@GZ-OPTIPLEX ~
-Wed07Aug.14:20:00 $
+$
+```
+Usage samples
+Given a folder with contents like this:
+![image](https://github.com/user-attachments/assets/faae0f0d-3bde-43ab-8253-771a532ef5de)
 
 ```
-
+python fix_year.py .
+```
+Run on the current folder, perform the changes, do not log, get console output with the changes performed
 Use flag -D or --demo to run a demo mode without applying changes
 
 ```
 python fix_year.py . --log --loglevel DEBUG --demo
 ```
-
-
-## 🎈 Usage <a name="usage"></a>
-
-Go to the folder where the movies folders are.
-Run the app as in the example above, or use a cmd/ps1/sh file as in the ones in the repo (provided as samples) to perform other automated cleanup tasks at the same time of the renaming.
-
 
 ## ⛏️ Built Using <a name = "built_using"></a>
 
