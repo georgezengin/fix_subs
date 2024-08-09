@@ -1,15 +1,17 @@
 log.txt
 /dir1
 /dir2
-*.txt
+
 /.idea
 /pycharm/*
 /.pytest_cache
 /.vscode
+/.venv
+/venv
 .hintrc
 *backup copy.py
 fix_subs b.py
-*Copy.py
+*copy.*
 test_argparse.py
 *.log
 *.ipynb
@@ -19,3 +21,4 @@ test_folder_renames.py
 *bup*
 *.bup
 *.sav
+*.bak

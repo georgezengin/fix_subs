@@ -60,57 +60,48 @@ Python 3.x
 
 Clone the repository:
 
+```
+
 ```bash
-git clone https://github.com/georgezengin/fix_subs.git
-cd fix_subs
+git clone https://github.com/yourusername/moviefolderrenamer.git
+cd moviefolderrenamer
 ```
 
 
 ## 🔧 Running the tests <a name = "tests"></a>
 
-Use flag -h or --help to get a usage description of the parameters
+Explain how to run the automated tests for this system.
+
+### Break down into end to end tests
+
+Explain what these tests test and why
 
 ```
-$ python fix_year.py -h
-usage: fix_year.py [-h] [--nodesc] [--demo] [--log] [--logfile LOGFILE] [--loglevel {DEBUG,INFO,ERROR}] [--silent] [--recurse] [folder_path]
-
-Rename movie folders by extracting and formatting name, years and release description as <name> (year) [release_description].
-
-positional arguments:
-  folder_path           Path to the folder containing the directories to rename
-
-options:
-  -h, --help            show this help message and exit
-  --nodesc, -S          Short name. Do not append movie release description after the year
-  --demo, -D            Demo mode. Show actions without performing them
-  --log, -L             Enable logging
-  --logfile LOGFILE, -F LOGFILE
-                        Log file name (self generated if not specified)
-  --loglevel {DEBUG,INFO,ERROR}, -LL {DEBUG,INFO,ERROR}
-                        Set logging level
-  --silent, -H          Silent/hush mode: suppress console output of log information
-  --recurse, -R         Recursive mode: traverses through subfolders
-george@GZ-OPTIPLEX ~
-Wed07Aug.14:20:00 $
-
+Give an example
 ```
 
-Use flag -D or --demo to run a demo mode without applying changes
+### And coding style tests
+
+Explain what these tests test and why
 
 ```
-python fix_year.py . --log --loglevel DEBUG --demo
+Give an example
 ```
-
 
 ## 🎈 Usage <a name="usage"></a>
 
-Go to the folder where the movies folders are.
-Run the app as in the example above, or use a cmd/ps1/sh file as in the ones in the repo (provided as samples) to perform other automated cleanup tasks at the same time of the renaming.
+Add notes about how to use the system.
 
+## 🚀 Deployment <a name = "deployment"></a>
+
+Add additional notes about how to deploy this on a live system.
 
 ## ⛏️ Built Using <a name = "built_using"></a>
 
 - [Python](https://www.python.org/) - Language
+- [Express](https://expressjs.com/) - Server Framework
+- [VueJs](https://vuejs.org/) - Web Framework
+- [NodeJs](https://nodejs.org/en/) - Server Environment
 
 ## ✍️ Authors <a name = "authors"></a>
 
@@ -118,3 +109,8 @@ Run the app as in the example above, or use a cmd/ps1/sh file as in the ones in 
 
 See also the list of [contributors](https://github.com/georgezengin/The-Documentation-Compendium/contributors) who participated in this project.
 
+## 🎉 Acknowledgements <a name = "acknowledgement"></a>
+
+- Hat tip to anyone whose code was used
+- Inspiration
+- References
