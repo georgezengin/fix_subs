@@ -18,6 +18,8 @@
 <p align="center"> 
 ## Movie Collection Beautifier
 
+A Python script to rename movie folders by extracting and formatting the name, year, and release description as:
+`<name> (year) [release_description]`.
 
 </p>
 
@@ -27,7 +29,8 @@
 - [Getting Started](#getting_started)
 - [Usage](#usage)
 - [Built Using](#built_using)
-- [Author](#authors)
+- [TODO](../TODO.md)
+- [Authors](#authors)
 
 ## 🧐 About <a name = "about"></a>
 
