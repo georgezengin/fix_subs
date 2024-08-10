@@ -265,6 +265,7 @@ def main(folder_path, use_rest_of_name, demo, log, log_file, loglevel, silent, r
    
     if not folder_path:
         folder_path = os.getcwd()
+    folder_path = os.path.abspath(folder_path)
 
     if not validate_folder_path(folder_path, logger):
         return
@@ -297,7 +298,7 @@ if __name__ == "__main__":
     parser.add_argument('folder_path', type=str, nargs='?', default=os.getcwd(), help="Path to the folder containing the directories to rename")
     parser.add_argument('--nodesc', '-S', action='store_true', help="Short name. Do not append movie release description after the year")
     parser.add_argument('--demo', '-D', action='store_true', help="Demo mode. Show actions without performing them")
-    parser.add_argument('--log', '-L', action='store_true', help="Enable logging")
+    parser.add_argument('--log', '--log_to_file', '-L', action='store_true', help="Enable logging")
     parser.add_argument('--logfile', '-F', type=str, help="Log file name (self generated if not specified)")
     parser.add_argument('--loglevel', '-LL', choices=['DEBUG', 'INFO', 'ERROR'], default='INFO', help="Set logging level")
     parser.add_argument('--silent', '-H', action='store_true', help="Silent/hush mode: suppress console output of log information")

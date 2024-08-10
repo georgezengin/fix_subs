@@ -5,6 +5,7 @@ log.txt
 /.idea
 /pycharm/*
 /.pytest_cache
+/__pycache__
 /.vscode
 /.venv
 /venv
@@ -22,3 +23,4 @@ test_folder_renames.py
 *.bup
 *.sav
 *.bak
+old*.py

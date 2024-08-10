@@ -4,7 +4,7 @@ setlocal enabledelayedexpansion
 rem Recurse through all subdirectories
 echo "Starting"
 rem Define the command to run the Python script with all passed parameters
-set CMD=python ..\__fixsubs\fix_year.py %*
+set CMD=python x:\2\_mov\__fixsubs\fix_year.py . -L -R %*
 
 rem Execute the Python script using the command stored in CMD
 echo %CMD%
@@ -26,6 +26,8 @@ for /d %%d in (*) do (
     if exist RARBG.TXT del RARBG.TXT
     if exist RARBG_DO_NOT_MIRROR.exe del RARBG_DO_NOT_MIRROR.exe
     for %%f in (NEW*.txt) do if exist "%%f" del "%%f"
+    for %%f in (YTS*.txt) do if exist "%%f" del "%%f"
+    for %%f in (YIF*.txt) do if exist "%%f" del "%%f"
     for %%f in ("[TGx]Downloaded from torrentgalaxy*.txt") do if exist "%%f" del "%%f"
     for %%f in (WWW*.jpg) do if exist "%%f" del "%%f"
     popd
@@ -33,4 +35,3 @@ for /d %%d in (*) do (
 exit /b
 
 endlocal
-rem pause

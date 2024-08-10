@@ -1,10 +1,11 @@
 # Function to delete specific elements
-function Delete-Garbage {
+function Clear-Garbage {
     # Array of file masks to delete
     $fileMasks = @(
         "RARBG.TXT",
         "RARBG_DO_NOT_MIRROR.exe",
         "NEW*.txt",
+        "YTS*.txt",
         "[TGx]Downloaded from torrentgalaxy*.txt",
         "WWW*.jpg",
         "ExtraTorrent*.*"
@@ -43,11 +44,9 @@ function Delete-Garbage {
         } else {
             Write-Host "`t*** Directory error: $($dir.FullName)`a"
         }
-                
 
         Pop-Location
     }
-
 }
 
 # Define the command to run the Python script with all passed parameters
@@ -73,7 +72,7 @@ if ($process.ExitCode -ne 0) {
     #Exit 1
 #}
 
-Delete-Garbage
+Clear-Garbage
 
 
 Write-Host

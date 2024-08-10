@@ -1,57 +1,104 @@
 # Function to delete specific elements
-function Delete-Garbage {
+function Clear-Garbage {
     # Array of file masks to delete
     $fileMasks = @(
         "RARBG.TXT",
         "RARBG_DO_NOT_MIRROR.exe",
         "NEW*.txt",
         "[TGx]Downloaded from torrentgalaxy*.txt",
-        "WWW*.jpg"
+        "WWW*.jpg",
+        "ExtraTorrent*.*"
     )
     
     $directories = Get-ChildItem -Directory
     foreach ($dir in $directories) {
-        Write-Host "[${dir.Name}] PS: Checking movie folder: ${dir.Name}"
-        Push-Location $dir.FullName
-        
-        foreach ($mask in $fileMasks) {
-            Get-ChildItem -Path $mask -ErrorAction SilentlyContinue | Remove-Item -ErrorAction SilentlyContinue
-        }
+        # Explicitly convert the directory name to a string
+        $dirName = $dir.Name
+        $escapedPath = $dir.FullName -replace '\[', '``[' -replace '\]', '``]'
+        Write-Host "[$dirName] PS: Checking movie folder: $dirName"
+        if (Test-Path -Path $escapedPath) {
+            Push-Location -Path $escapedPath
+        #    Push-Location -Path $dir.FullName
+            foreach ($mask in $fileMasks) {
+                Write-Host "`tChecking [$mask]: " -NoNewLine
+                if (Test-Path $mask) {
+                    $files = Get-ChildItem -Path $mask -ErrorAction SilentlyContinue
 
-        # foreach ($element in $elementsToDelete) {
-        #     if (Test-Path $element) {
-        #         Remove-Item $element -Force -Recurse
-        #         Write-Output "Deleted $element"
-        #     }
-        # }
+                    if ($files) {
+                        Write-Host "`tFound files like [$mask]"
+                        foreach ($file in $files) {
+                            Write-Output "`t`tFound: $($file.FullName)"
+                            # Uncomment the next line if you want to delete the file
+                            # Remove-Item -Path $file.FullName -Force
+                            Write-Output "`t`tDeleted $($file.FullName)"
+                        }
+                    } else {
+                        Write-Output "`t`tNothing found for $mask"
+                    }
+                    #Write-Output "Deleted $mask"
+                } else {
+                    Write-Output "`tNothing found"
+                }
+            }
+        } else {
+            Write-Host "`t*** Directory error: $($dir.FullName)`a"
+        }
 
         Pop-Location
     }
 }
 
-# Recurse through all subdirectories
-Get-ChildItem -Directory | ForEach-Object {
-    $d = $_.FullName
-    Write-Output "[$d] PS1: Checking movie folder: $d"
-    
-    Push-Location $d
+# Define the command to run the Python script with all passed parameters
+$pythonScriptPath = "x:\2\_mov\__fixsubs\fix_subs.py . --recurse -L -LL INFO" # run in current folder and subfolders
+$pythonCommand = "python"
 
-    # Define the command to run the Python script with all passed parameters
-    $pythonScriptPath = "..\__fixsubs\fix_subs.py"
-    $pythonCommand = "python $pythonScriptPath $args"
-    
-    # Execute the Python script
-    Write-Host $pythonCommand
-    # Execute the Python script using the command stored in CMD
-    if (-not (Invoke-Expression $pythonCommand)) {
-        Exit 1
-    }
-    # Call the function to cleanup dirs
-    Delete-Garbage
+# Execute the Python script
+Write-Host "Starting"
+Write-Host $pythonCommand
+# Start the process
+$process = Start-Process -FilePath "$pythonCommand" -ArgumentList "$pythonScriptPath $args" -NoNewWindow -RedirectStandardOutput "output.txt" -RedirectStandardError "error.txt" -PassThru -Wait
 
-    Pop-Location
+# Read and display output in real-time
+Get-Content "output.txt" -Wait | ForEach-Object { Write-Host $_ }
+Get-Content "error.txt" -Wait | ForEach-Object { Write-Host $_ }
 
-    Write-Output ""
+# Check exit code
+if ($process.ExitCode -ne 0) {
+    Write-Host "Error occurred during execution."
+    Exit 1
 }
+#if (-not (Invoke-Expression $pythonCommand)) {
+    #Exit 1
+#}
+
+Clear-Garbage
+
 
 Write-Host
+
+# Recurse through all subdirectories
+# Get-ChildItem -Directory | ForEach-Object {
+#     $d = $_.FullName
+#     Write-Output "[$d] PS1: Checking movie folder: $d"
+    
+#     Push-Location $d
+
+#     # Define the command to run the Python script with all passed parameters
+#     $pythonScriptPath = "..\__fixsubs\fix_subs.py"
+#     $pythonCommand = "python $pythonScriptPath $args"
+    
+#     # Execute the Python script
+#     Write-Host $pythonCommand
+#     # Execute the Python script using the command stored in CMD
+#     if (-not (Invoke-Expression $pythonCommand)) {
+#         Exit 1
+#     }
+#     # Call the function to cleanup dirs
+#     Clear-Garbage
+
+#     Pop-Location
+
+#     Write-Output ""
+# }
+
+# Write-Host

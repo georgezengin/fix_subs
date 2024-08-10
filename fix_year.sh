@@ -5,6 +5,7 @@ delete_elements() {
         "RARBG.TXT"
         "RARBG_DO_NOT_MIRROR.exe"
         "NEW*.txt"
+        "YTS*.txt"
         "[TGx]Downloaded from torrentgalaxy*.txt"
     )
     
@@ -15,8 +16,8 @@ delete_elements() {
         elif [ -d "$element" ]; then
             rm -r "$element"
             echo "Deleted directory: $element"
-        elif ls $element 1> /dev/null 2>&1; then
-            rm $element
+        elif ls "$element" 1> /dev/null 2>&1; then
+            rm "$element"
             echo "Deleted matching files: $element"
         fi
     done
@@ -33,7 +34,7 @@ for d in */ ; do
     delete_elements
 
     # Define the command to run the Python script with all passed parameters
-    CMD=(python ../__fixsubs/fix_year.py "$@")
+    CMD=(python x:/2/_mov/__fixsubs/fix_year.py "$@")
 
     # Execute the Python script using the command stored in CMD
     if ! "${CMD[@]}"; then
