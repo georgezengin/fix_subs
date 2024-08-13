@@ -56,17 +56,15 @@ class Movie:
         media_info = MediaInfo.parse(os.path.join(self.folder_path, self.file_name))
         langs = {'english': 'en', 'spanish': 'sp'}
 
-        ret_val = any(track.track_type == 'Text' and 
-                      track.language is not None and
-                      track.language.lower() == langs[lang]
-                        for track in media_info.tracks)
-        if len(media_info.tracks) == 0:
-            logger.log_debug(f"{self.file_name}: No text tracks found in media file")
-        else:
-            for track in media_info.tracks:
-                if track.track_type == 'Text':
-                    logger.log_debug(f"Text Tracks found [{self.file_name}]: Type={track.track_type}, Lang={track.language}, found '{langs[lang]}'?={'Yes' if langs[lang]==track.language else 'Nope'}")
-        logger.log_debug(f"{self.file_name}: {'Found' if ret_val else 'Didn\'t find'} embedded subtitles in {lang}: {ret_val}")
+        ret_val = any(track.track_type == 'Text' and track.language is not None and track.language.lower() == langs[lang] for track in media_info.tracks)
+        if logger.get_loglevel() == 'DEBUG': # only execute this code if needed for debug mode
+            if len(media_info.tracks) == 0:
+                logger.log_debug(f"{self.file_name}: No text tracks found in media file")
+            else:
+                for track in media_info.tracks:
+                    if track.track_type == 'Text':
+                        logger.log_debug(f"Text Tracks found [{self.file_name}]: Type={track.track_type}, Lang={track.language}, found '{langs[lang]}'?={'Yes' if langs[lang]==track.language else 'Nope'}")
+            logger.log_debug(f"{self.file_name}: {'Found' if ret_val else 'Didn\'t find'} embedded subtitles in {lang}: {ret_val}")
         return ret_val
 
     def set_subtitle_file(self, subtitle_path: str) -> bool:

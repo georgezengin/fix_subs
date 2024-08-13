@@ -24,3 +24,8 @@ test_folder_renames.py
 *.sav
 *.bak
 old*.py
+/.codesamples
+logger_class_1.py
+logger_class_2.py
+config.yaml
+colordict.py
